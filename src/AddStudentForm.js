@@ -10,6 +10,11 @@ function AddStudentForm({ baseUrl}) {
   const [learningLevel, setLearningLevel] = useState('');
   const [metadata, setMetadata] = useState([]);
   const [image, setImage] = useState(null);
+  const [gender, setGender] = useState('');
+  const [guardianName, setGuardianName] = useState('');
+  const [dob, setDob] = useState('');
+  const [schoolName, setSchoolName] = useState('');
+  const [studentClass, setStudentClass] = useState('');
   const { setIsLoading } = useContext(LoadingContext);
 
   const handleImageChange = (event) => {
@@ -70,6 +75,11 @@ function AddStudentForm({ baseUrl}) {
         learningLevel,
         metadata: formattedMetadata,
         imageUrl,  // Include image URL
+        gender,
+        guardianName,
+        dob,
+        schoolName,
+        studentClass
       });
       navigate('/');
       // alert(response.data.message);
@@ -134,6 +144,86 @@ function AddStudentForm({ baseUrl}) {
           onChange={handleImageChange}
           className="w-full px-4 py-2 border rounded"
           capture="camera"
+        />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-gray-700">Gender:</label>
+        <div>
+          <label>
+            <input
+              type="radio"
+              value="Male"
+              checked={gender === 'Male'}
+              onChange={(e) => setGender(e.target.value)}
+            />
+            Male
+          </label>
+          <label>
+            <input
+              type="radio"
+              value="Female"
+              checked={gender === 'Female'}
+              onChange={(e) => setGender(e.target.value)}
+            />
+            Female
+          </label>
+        </div>
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="guardianName" className="block text-gray-700">
+          Guardian's Name:
+        </label>
+        <input
+          type="text"
+          id="guardianName"
+          value={guardianName}
+          onChange={(e) => setGuardianName(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="dob" className="block text-gray-700">
+          Date of Birth:
+        </label>
+        <input
+          type="date"
+          id="dob"
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="schoolName" className="block text-gray-700">
+          School Name:
+        </label>
+        <input
+          type="text"
+          id="schoolName"
+          value={schoolName}
+          onChange={(e) => setSchoolName(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
+        />
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="studentClass" className="block text-gray-700">
+          Class:
+        </label>
+        <input
+          type="text"
+          id="studentClass"
+          value={studentClass}
+          onChange={(e) => setStudentClass(e.target.value)}
+          className="w-full px-4 py-2 border rounded"
+          required
         />
       </div>
 

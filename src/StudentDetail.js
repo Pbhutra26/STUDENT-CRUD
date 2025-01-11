@@ -61,6 +61,11 @@ function StudentDetail({ baseUrl }) {
         <p><strong>Age:</strong> {student.age}</p>
         <p><strong>Phone:</strong> {student.phone}</p>
         <p><strong>Learning Level:</strong> {student.learningLevel}</p>
+        <p><strong>Gender:</strong> {student.gender}</p>
+        <p><strong>Guardian's Name:</strong> {student.guardianName}</p>
+        <p><strong>Date of Birth:</strong> {student.dob}</p>
+        <p><strong>School Name:</strong> {student.schoolName}</p>
+        <p><strong>Class:</strong> {student.studentClass}</p>
         {student.metadata && Object.keys(student.metadata).length > 0 && (
           <div className="mt-4">
             <h3 className="text-lg font-semibold">Additional Information</h3>
