@@ -60,11 +60,13 @@ function StudentList({baseUrl}) {
     const baseUrl = process.env.REACT_APP_BASE_URL; // Get base URL from .env file
     console.log(today);
     try {
+      setIsLoading(true);
       if (isPresent) {
         await axios.delete(`${baseUrl}/attendance/remove/${today}/${Number(rollNumber)}`);
       } else {
         await axios.get(`${baseUrl}/attendance/add/${today}/${Number(rollNumber)}`);
       }
+      setIsLoading(false);
       setAttendance(prev => ({ ...prev, [Number(rollNumber)]: !isPresent }));
     } catch (error) {
       console.error('Error updating attendance:', error);
