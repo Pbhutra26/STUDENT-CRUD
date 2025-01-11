@@ -23,13 +23,10 @@ function StudentList({baseUrl}) {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
+    setIsLoading(true);
     fetchStudents();
-  }, []);
-
-
-
-  useEffect(() => {
     const fetchInitialAttendance = async () => {
       const today = new Date();
       if (today.getDay() === 0) { // Check if today is Sunday
@@ -41,16 +38,19 @@ function StudentList({baseUrl}) {
           const presentStudents = response.data.numbers;
           const initialAttendance = {};
           students.forEach(student => {
-            initialAttendance[Number(student.rollNumber)] = presentStudents.includes(Number(student.rollNumber));
+            initialAttendance[Number(student.rollNumber)] = presentStudents.includes(student.rollNumber.toString());
           });
           setAttendance(initialAttendance);
+          setIsLoading(false);
         } catch (error) {
           console.error('Error fetching initial attendance:', error);
         }
       }
     };
 
+    setIsLoading(true);
     fetchInitialAttendance();
+    setIsLoading(false);
   }, [students]);
 
   const handleAttendance = async (rollNumber) => {
