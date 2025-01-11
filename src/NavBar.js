@@ -16,7 +16,7 @@ function NavBar() {
   return (
     <nav className="relative bg-gray-800 p-4">
       <div className="flex items-center justify-between">
-        <Link to="/" className="text-white text-lg font-bold">Student Manager</Link>
+        <Link to="/" className="text-white text-lg font-bold">STUDENT MANAGEMENT TOOL</Link>
         <div className="block lg:hidden">
           <button onClick={toggleMenu} className="text-white focus:outline-none">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
