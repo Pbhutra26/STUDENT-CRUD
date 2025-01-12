@@ -136,9 +136,9 @@ function StudentList({baseUrl}) {
                 {new Date().getDay() === 0 && (
                   <button
                     onClick={() => handleAttendance(student.rollNumber)}
-                    className={`px-2 py-1 rounded font-bold text-xs text-white ${attendance[student.rollNumber] ? 'bg-red-500' : 'bg-green-500  '}`}
+                    className={`px-1 py-1 rounded font-bold text-xs text-white ${attendance[student.rollNumber] ? 'bg-green-500' : 'bg-red-500  '}`}
                   >
-                    {attendance[student.rollNumber] ? 'MARK ABSENT' : 'MARK PRESENT'}
+                    {attendance[student.rollNumber] ? 'PRESENT' : 'ABSENT'}
                   </button>
                 )}
               </li>
