@@ -28,7 +28,7 @@ function StudentDetail({ baseUrl }) {
     };
 
     fetchStudent();
-    fetchAttendance();
+    // fetchAttendance();
   }, [rollNumber, baseUrl]);
 
   const handleEdit = () => {
@@ -76,7 +76,7 @@ function StudentDetail({ baseUrl }) {
             </ul>
           </div>
         )}
-        <div className="mt-4">
+        {/* <div className="mt-4">
           <h3 className="text-lg font-semibold">Attendance</h3>
           <div className="flex space-x-2">
             {attendance.map((present, index) => (
@@ -86,7 +86,7 @@ function StudentDetail({ baseUrl }) {
               ></div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
