@@ -57,6 +57,10 @@ function Attendance({ baseUrl }) {
     doc.text('Name', 50, y);
     y += 10;
     entry.numbers.forEach((rollNumber, index) => {
+      if (y > 280) { // Check if we need to add a new page
+        doc.addPage();
+        y = 20;
+      }
       doc.text(rollNumber.toString(), 10, y);
       doc.text(names[index] || 'Unknown', 50, y);
       y += 10;
