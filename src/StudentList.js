@@ -126,7 +126,7 @@ function StudentList({ baseUrl }) {
         onChange={handleSearchChange}
         className="mb-4 p-2 border rounded"
       />
-      {filteredStudents.length > 0 ? (
+      {filteredStudents.length === 0 ? (
         <p className="text-gray-500">Download the excel sheet for student details</p>
       ) : (
         <>
