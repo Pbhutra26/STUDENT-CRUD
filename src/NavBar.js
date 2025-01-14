@@ -14,7 +14,7 @@ function NavBar() {
   };
 
   return (
-    <nav className="relative bg-gray-800 p-4">
+    <nav className="relative bg-gray-800 p-4 z-50">
       <div className="flex items-center justify-between">
         <Link to="/" className="text-white text-lg font-bold">STUDENT MANAGEMENT TOOL</Link>
         <div className="block lg:hidden">
