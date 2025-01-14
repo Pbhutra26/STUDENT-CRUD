@@ -5,6 +5,7 @@ import { LoadingContext } from './LoadingContext';
 import { StudentContext } from './StudentContext';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import ExcelJS from 'exceljs';
 
 function StudentList({ baseUrl }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -64,19 +65,35 @@ function StudentList({ baseUrl }) {
   };
 
   const handleDownload = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/download-students`, {
-        responseType: 'blob',
-      });
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'students.xlsx');
-      document.body.appendChild(link);
-      link.click();
-    } catch (error) {
-      console.error('Error downloading students:', error);
-    }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Students');
+
+    worksheet.columns = [
+      { header: 'Roll Number', key: 'rollNumber', width: 10 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Age', key: 'age', width: 10 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Learning Level', key: 'learningLevel', width: 15 },
+      { header: 'Image URL', key: 'imageUrl', width: 30 },
+      { header: 'Gender', key: 'gender', width: 10 },
+      { header: 'Guardian Name', key: 'guardianName', width: 30 },
+      { header: 'DOB', key: 'dob', width: 15 },
+      { header: 'School Name', key: 'schoolName', width: 30 },
+      { header: 'Class', key: 'studentClass', width: 10 },
+    ];
+
+    filteredStudents.forEach(student => {
+      worksheet.addRow(student);
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'students.xlsx');
+    document.body.appendChild(link);
+    link.click();
   };
 
   // Filter students based on search term and age range
@@ -127,7 +144,7 @@ function StudentList({ baseUrl }) {
           onClick={handleDownload}
           className="bg-gray-200 shadow-sm text-gray-800 px-3 py-1 font-extrabold text-sm rounded flex items-center"
         >
-          ⬇️ FULL LIST
+          ⬇️ EXCEL
         </button>
       </div>
       <input
