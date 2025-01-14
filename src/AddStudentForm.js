@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { LoadingContext } from './LoadingContext';
-
+import { StudentContext } from './StudentContext';
 function AddStudentForm({ baseUrl}) {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -17,6 +17,7 @@ function AddStudentForm({ baseUrl}) {
   const [studentClass, setStudentClass] = useState('');
   const { setIsLoading } = useContext(LoadingContext);
 
+  const { students , setStudents } = useContext(StudentContext);
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setImage(file);
@@ -81,7 +82,9 @@ function AddStudentForm({ baseUrl}) {
         schoolName,
         studentClass
       });
-      navigate('/');
+
+      setStudents([...students, response.data]);
+      navigate('/students/'+response.data.rollNumber);
       // alert(response.data.message);
     } catch (error) {
       alert('An error occurred. Please try again.');

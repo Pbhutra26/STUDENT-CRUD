@@ -95,7 +95,7 @@ function EditStudent({ baseUrl }) {
         return acc;
       }, {});
 
-      await axios.put(`${baseUrl}/students/${rollNumber}`, {
+      const response = await axios.put(`${baseUrl}/students/${rollNumber}`, {
         name,
         age,
         phone,

@@ -1,38 +1,25 @@
-import React, { useState, useEffect,useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { LoadingContext } from './LoadingContext';
+import { StudentContext } from './StudentContext';
 
-function StudentList({baseUrl}) {
-  const [students, setStudents] = useState([]);
+function StudentList({ baseUrl }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [attendance, setAttendance] = useState({});
   const studentsPerPage = 5;
   const { setIsLoading } = useContext(LoadingContext);
-
-  const fetchStudents = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${baseUrl}/students`);
-      const data = await response.json();
-      setStudents(data);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { students } = useContext(StudentContext);
 
   useEffect(() => {
     setIsLoading(true);
-    fetchStudents();
+
     const fetchInitialAttendance = async () => {
       const today = new Date();
       if (today.getDay() === 0) { // Check if today is Sunday
         const [date, month, year] = today.toLocaleDateString('en-GB').split('/');
         const formattedDate = `${date}-${month}-${year.slice(2)}`;
-        const baseUrl = process.env.REACT_APP_BASE_URL; // Get base URL from .env file
         try {
           const response = await axios.get(`${baseUrl}/sundays/${formattedDate}`);
           const presentStudents = response.data.numbers;
@@ -51,7 +38,7 @@ function StudentList({baseUrl}) {
     setIsLoading(true);
     fetchInitialAttendance();
     setIsLoading(false);
-  }, [students]);
+  }, []);
 
   const handleAttendance = async (rollNumber) => {
     const [date, month, year] = new Date().toLocaleDateString('en-GB').split('/');
@@ -73,9 +60,25 @@ function StudentList({baseUrl}) {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/download-students`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'students.xlsx');
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error downloading students:', error);
+    }
+  };
+
   // Filter students based on search term
   const filteredStudents = students.filter(student => {
-    if (!isNaN(searchTerm) && searchTerm.length <=3) {
+    if (!isNaN(searchTerm) && searchTerm.length <= 3) {
       return student.rollNumber.toString().includes(searchTerm);
     } else if (!isNaN(searchTerm)) {
       return student.phone.toString().includes(searchTerm);
@@ -107,7 +110,15 @@ function StudentList({baseUrl}) {
 
   return (
     <div className="mt-8">
-      <h2 className="text-xl font-semibold m-2">Student List</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold m-2">Student List</h2>
+        <button
+          onClick={handleDownload}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Download Excel
+        </button>
+      </div>
       <input
         type="text"
         placeholder="Search"
@@ -115,8 +126,8 @@ function StudentList({baseUrl}) {
         onChange={handleSearchChange}
         className="mb-4 p-2 border rounded"
       />
-      {filteredStudents.length === 0 ? (
-        <p className="text-gray-500">No students found.</p>
+      {filteredStudents.length > 0 ? (
+        <p className="text-gray-500">Download the excel sheet for student details</p>
       ) : (
         <>
           <ul className="space-y-2">

@@ -1,6 +1,6 @@
 import './App.css';
-import { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import AddStudentForm from './AddStudentForm';
 import StudentList from './StudentList';
 import StudentDetail from './StudentDetail';
@@ -9,11 +9,30 @@ import { LoadingContext, LoadingProvider } from './LoadingContext';
 import NavBar from './NavBar';
 import EditStudent from './EditStudent';
 import Attendance from './Attendance';
+import { StudentProvider, StudentContext } from './StudentContext';
+import axios from 'axios';
 
 function AppContent() {
   const baseUrl = process.env.REACT_APP_BASE_URL;
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
+  const { setStudents } = useContext(StudentContext);
 
-  const { isLoading } = useContext(LoadingContext);
+  const fetchStudents = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`${baseUrl}/students`);
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
   return (
     <>
       {isLoading && <LoadingScreen />}
@@ -33,11 +52,13 @@ function AppContent() {
 
 function App() {
   return (
-    <LoadingProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </LoadingProvider>
+    <StudentProvider>
+      <LoadingProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </LoadingProvider>
+    </StudentProvider>
   );
 }
 
