@@ -167,16 +167,17 @@ function StudentList({ baseUrl }) {
                     <p className={` font-extrabold text-blue-900 uppercase ${student.name.length>16?'text-xxs':'text-xs'}`}>{student.name}</p>
                     <p><strong>No.</strong> {student.rollNumber}</p>
                     <p><strong>Age:</strong> {student.age}</p>
-                  </div>
-                </Link>
-                {new Date().getDay() === 0 && (
+                    {new Date().getDay() === 0 && (
                   <button
                     onClick={() => handleAttendance(student.rollNumber)}
-                    className={`px-1 py-1 rounded font-bold text-xs text-white ${attendance[student.rollNumber] ? 'bg-green-500' : 'bg-red-500  '}`}
+                    className={`px-1 rounded text-xxs text-white ${attendance[student.rollNumber] ? 'bg-green-500' : 'bg-red-500  '}`}
                   >
                     {attendance[student.rollNumber] ? 'PRESENT' : 'ABSENT'}
                   </button>
                 )}
+                  </div>
+                </Link>
+
               </div>
             ))}
           </div>
