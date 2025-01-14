@@ -30,7 +30,7 @@ function AppContent() {
   };
 
   useEffect(() => {
-    // fetchStudents();
+    fetchStudents();
   }, []);
 
   return (

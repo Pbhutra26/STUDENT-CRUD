@@ -114,9 +114,9 @@ function StudentList({ baseUrl }) {
         <h2 className="text-xl font-semibold m-2">Student List</h2>
         <button
           onClick={handleDownload}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-300 text-white px-1 py-1 rounded"
         >
-          Download Excel
+          Full list
         </button>
       </div>
       <input
