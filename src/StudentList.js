@@ -3,12 +3,15 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { LoadingContext } from './LoadingContext';
 import { StudentContext } from './StudentContext';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 function StudentList({ baseUrl }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [attendance, setAttendance] = useState({});
-  const studentsPerPage = 5;
+  const [ageRange, setAgeRange] = useState([4, 15]);
+  const studentsPerPage = 10; // 2 rows of 5 students each
   const { setIsLoading } = useContext(LoadingContext);
   const { students } = useContext(StudentContext);
 
@@ -76,15 +79,17 @@ function StudentList({ baseUrl }) {
     }
   };
 
-  // Filter students based on search term
+  // Filter students based on search term and age range
   const filteredStudents = students.filter(student => {
-    if (!isNaN(searchTerm) && searchTerm.length <= 3) {
-      return student.rollNumber.toString().includes(searchTerm);
-    } else if (!isNaN(searchTerm)) {
-      return student.phone.toString().includes(searchTerm);
-    } else {
-      return student.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
+    const matchesSearchTerm = !isNaN(searchTerm) && searchTerm.length <= 3
+      ? student.rollNumber.toString().includes(searchTerm)
+      : !isNaN(searchTerm)
+      ? student.phone.toString().includes(searchTerm)
+      : student.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesAgeRange = student.age >= ageRange[0] && student.age <= ageRange[1];
+
+    return matchesSearchTerm && matchesAgeRange;
   });
 
   // Calculate the indices of the students to display on the current page
@@ -108,15 +113,21 @@ function StudentList({ baseUrl }) {
     setCurrentPage(1); // Reset to first page on search
   };
 
+  // Handler for age range change
+  const handleAgeRangeChange = (newRange) => {
+    setAgeRange(newRange);
+    setCurrentPage(1); // Reset to first page on filter change
+  };
+
   return (
-    <div className="mt-8">
+    <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold m-2">Student List</h2>
         <button
           onClick={handleDownload}
-          className="bg-blue-300 text-white px-1 py-1 rounded"
+          className="bg-gray-200 shadow-sm text-gray-800 px-3 py-1 font-extrabold text-sm rounded flex items-center"
         >
-          Full list
+          ⬇️ FULL LIST
         </button>
       </div>
       <input
@@ -124,24 +135,38 @@ function StudentList({ baseUrl }) {
         placeholder="Search"
         value={searchTerm}
         onChange={handleSearchChange}
-        className="mb-4 p-2 border rounded"
+        className="mb-4 p-2 border rounded w-1/2"
       />
+      <div className='flex-col items-center justify-center'>
+      <div className="flex items-center mb-2 w-2/3">
+        <Slider
+          range
+          min={4}
+          max={15}
+          value={ageRange}
+          onChange={handleAgeRangeChange}
+        />
+        </div>
+        <span>Ages: {ageRange[0]} to {ageRange[1]}</span>
+      </div>
+      <p className="text-gray-500 mb-4">Filtered Students: {filteredStudents.length}</p>
       {filteredStudents.length === 0 ? (
         <p className="text-gray-500">Download the excel sheet for student details</p>
       ) : (
         <>
-          <ul className="space-y-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-4">
             {currentStudents.map((student) => (
-              <li key={student.rollNumber} className="border p-4 rounded-lg shadow flex items-center space-x-4 justify-between">
+              <div key={student.rollNumber} className="border p-4 rounded-lg shadow flex items-center space-x-4 justify-between">
                 <Link to={`/students/${student.rollNumber}`} className="flex items-center space-x-4">
-                  <img
+                  {/* <img
                     src={student.imageUrl}
                     alt={`${student.name}'s avatar`}
                     className="w-16 h-16 rounded-full object-cover"
-                  />
+                  /> */}
                   <div>
-                    <p><strong>Roll Number:</strong> {student.rollNumber}</p>
-                    <p><strong>Name:</strong> {student.name}</p>
+                    <p className={` font-extrabold text-blue-900 uppercase ${student.name.length>16?'text-xxs':'text-xs'}`}>{student.name}</p>
+                    <p><strong>No.</strong> {student.rollNumber}</p>
+                    <p><strong>Age:</strong> {student.age}</p>
                   </div>
                 </Link>
                 {new Date().getDay() === 0 && (
@@ -152,9 +177,9 @@ function StudentList({ baseUrl }) {
                     {attendance[student.rollNumber] ? 'PRESENT' : 'ABSENT'}
                   </button>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
 
           {/* Pagination Controls */}
           <div className="flex justify-between items-center mt-4">
@@ -166,7 +191,7 @@ function StudentList({ baseUrl }) {
               Previous
             </button>
             <p>
-              Page {currentPage} of {totalPages}
+              {currentPage} of {totalPages}
             </p>
             <button
               onClick={() => handlePageChange(currentPage + 1)}

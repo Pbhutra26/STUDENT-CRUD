@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+.text-xxs {
+  font-size: 0.6rem /* 12px */;
+  line-height: 1rem /* 16px */;
+}
