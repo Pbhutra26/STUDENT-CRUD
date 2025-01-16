@@ -14,6 +14,8 @@ function StudentDetail({ baseUrl }) {
         const response = await axios.get(`${baseUrl}/students/${rollNumber}`);
         setStudent(response.data);
       } catch (error) {
+        alert('Error fetching student data:', error);
+        navigate('/');
         console.error('Error fetching student data:', error);
       }
     };

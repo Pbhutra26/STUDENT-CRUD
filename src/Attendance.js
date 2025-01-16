@@ -48,23 +48,54 @@ function Attendance({ baseUrl }) {
     }
   };
 
+  const fetchVolunteerNames = async (phoneNumbers) => {
+    try {
+      const names = await Promise.all(
+        phoneNumbers.map(async (phoneNumber) => {
+          const response = await fetch(`${baseUrl}/volunteers/${phoneNumber}`);
+          const data = await response.json();
+          return data.name;
+        })
+      );
+      return names;
+    } catch (error) {
+      console.error("Error fetching volunteer names:", error);
+      return [];
+    }
+  };
+
   const generatePDF = async (entry) => {
     const doc = new jsPDF();
-    const names = await fetchNames(entry.numbers);
+    const studentNames = entry.numbers ? await fetchNames(entry.numbers) : [];
+    const volunteerNames = entry.volunteers ? await fetchVolunteerNames(entry.volunteers) : [];
     doc.text(`Attendance for ${formatDate(entry.date)}`, 10, 10);
     let y = 20;
     doc.text('Roll Number', 10, y);
     doc.text('Name', 50, y);
     y += 10;
-    entry.numbers.forEach((rollNumber, index) => {
+    entry.numbers && entry.numbers.forEach((rollNumber, index) => {
       if (y > 280) { // Check if we need to add a new page
         doc.addPage();
         y = 20;
       }
       doc.text(rollNumber.toString(), 10, y);
-      doc.text(names[index] || 'Unknown', 50, y);
+      doc.text(studentNames[index] || 'Unknown', 50, y);
       y += 10;
     });
+    if (entry.volunteers && entry.volunteers.length > 0) {
+      y += 10;
+      doc.text('Volunteer Names', 20, y);
+      y += 10;
+      entry.volunteers.forEach((phoneNumber, index) => {
+        if (y > 280) { // Check if we need to add a new page
+          doc.addPage();
+          y = 20;
+        }
+       
+        doc.text(volunteerNames[index] || 'Unknown', 20, y);
+        y += 10;
+      });
+    }
     doc.save(`attendance_${entry.date}.pdf`);
   };
 
@@ -90,7 +121,8 @@ function Attendance({ baseUrl }) {
             {paginatedAttendance.map((entry, index) => (
               <div key={index} className="bg-white shadow-md rounded-lg p-4">
                 <h2 className="text-xl font-semibold mb-2">{formatDate(entry.date)}</h2>
-                <p>{entry.numbers.length} attendees</p>
+                <p className="text-sm">{(entry.numbers ? entry.numbers.length : 0)} Student(s)</p>
+                <p className="text-sm">{(entry.volunteers ? entry.volunteers.length : 0)} Volunteer(s)</p>
                 <button
                   onClick={() => generatePDF(entry)}
                   className="bg-green-500 text-white px-2 py-1 rounded mt-2 text-sm"

@@ -53,6 +53,14 @@ function NavBar() {
                 Attendance
               </Link>
             </li>
+            <li onClick={handleMenuItemClick}>
+              <Link 
+                to="/volunteers" 
+                className={`block p-2 text-center rounded ${location.pathname === '/volunteers' ? 'bg-gray-700' : ''}`}
+              >
+                Volunteers
+              </Link>
+            </li>
           </ul>
         </div>
       </div>

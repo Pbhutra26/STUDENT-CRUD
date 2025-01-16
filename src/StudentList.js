@@ -21,7 +21,7 @@ function StudentList({ baseUrl }) {
 
     const fetchInitialAttendance = async () => {
       const today = new Date();
-      if (today.getDay() === 0) { // Check if today is Sunday
+      if (today.getDay() === 4) { // Check if today is Sunday
         const [date, month, year] = today.toLocaleDateString('en-GB').split('/');
         const formattedDate = `${date}-${month}-${year.slice(2)}`;
         try {
@@ -74,7 +74,6 @@ function StudentList({ baseUrl }) {
       { header: 'Age', key: 'age', width: 10 },
       { header: 'Phone', key: 'phone', width: 15 },
       { header: 'Learning Level', key: 'learningLevel', width: 15 },
-      { header: 'Image URL', key: 'imageUrl', width: 30 },
       { header: 'Gender', key: 'gender', width: 10 },
       { header: 'Guardian Name', key: 'guardianName', width: 30 },
       { header: 'DOB', key: 'dob', width: 15 },
@@ -182,8 +181,8 @@ function StudentList({ baseUrl }) {
                   /> */}
                   <div>
                     <p className={` font-extrabold text-blue-900 uppercase ${student.name.length>16?'text-xxs':'text-xs'}`}>{student.name}</p>
-                    <p><strong>No.</strong> {student.rollNumber}</p>
-                    <p><strong>Age:</strong> {student.age}</p>
+                    <p className='text-xs'><strong>No.</strong> {student.rollNumber}</p>
+                    <p className='text-xs'><strong>Age:</strong> {student.age}</p>
                     {new Date().getDay() === 0 && (
                   <button
                     onClick={() => handleAttendance(student.rollNumber)}

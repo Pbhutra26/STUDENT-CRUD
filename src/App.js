@@ -11,11 +11,14 @@ import EditStudent from './EditStudent';
 import Attendance from './Attendance';
 import { StudentProvider, StudentContext } from './StudentContext';
 import axios from 'axios';
+import { VolunteerProvider, VolunteerContext } from './VolunteerContext';
+import VolunteerList from './VolunteerList';
 
 function AppContent() {
   const baseUrl = process.env.REACT_APP_BASE_URL;
   const { isLoading, setIsLoading } = useContext(LoadingContext);
   const { setStudents } = useContext(StudentContext);
+  const { setVolunteers } = useContext(VolunteerContext);
 
   const fetchStudents = async () => {
     setIsLoading(true);
@@ -29,8 +32,18 @@ function AppContent() {
     }
   };
 
+  const fetchVolunteers = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/volunteers`);
+      setVolunteers(response.data);
+    } catch (error) {
+      console.error('Error fetching volunteers:', error);
+    }
+  };
+
   useEffect(() => {
     fetchStudents();
+    // fetchVolunteers();
   }, []);
 
   return (
@@ -41,9 +54,10 @@ function AppContent() {
         <Routes>
           <Route exact path="/" element={<StudentList baseUrl={baseUrl}/>} />
           <Route path="/students/:rollNumber" element={<StudentDetail baseUrl={baseUrl} />} />
-          <Route path="/add-student" element={<AddStudentForm  baseUrl={baseUrl}/>} />
+          <Route path="/add-student" element={<AddStudentForm baseUrl={baseUrl}/>} />
           <Route path="/edit-student/:rollNumber" element={<EditStudent baseUrl={baseUrl} />} />
           <Route path="/attendance" element={<Attendance baseUrl={baseUrl} />} />
+          <Route path="/volunteers" element={<VolunteerList baseUrl={baseUrl} />} />
         </Routes>
       </div>
     </>
@@ -54,9 +68,11 @@ function App() {
   return (
     <StudentProvider>
       <LoadingProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <VolunteerProvider>
+          <Router>
+            <AppContent />
+          </Router>
+        </VolunteerProvider>
       </LoadingProvider>
     </StudentProvider>
   );
