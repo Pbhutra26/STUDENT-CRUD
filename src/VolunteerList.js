@@ -7,17 +7,11 @@ function VolunteerList({ baseUrl }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [attendance, setAttendance] = useState({});
   const [authKey, setAuthKey] = useState('');
+  const [newVolunteer, setNewVolunteer] = useState({ name: '', phone: '' });
+  const [showAddForm, setShowAddForm] = useState(false);
   const { volunteers, setVolunteers } = useContext(VolunteerContext);
   const { setIsLoading } = useContext(LoadingContext);
 
-  const fetchVolunteers = async () => {
-    try {
-      const response = await axios.get(`${baseUrl}/volunteers`);
-      setVolunteers(response.data);
-    } catch (error) {
-      console.error('Error fetching volunteers:', error);
-    }
-  };
   useEffect(() => {
     const fetchVolunteers = async () => {
       try {
@@ -85,9 +79,28 @@ function VolunteerList({ baseUrl }) {
     }
   };
 
+  const handleAddVolunteer = async () => {
+    if (authKey !== '1234567890') {
+      alert('Invalid authentication key');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${baseUrl}/volunteers`, newVolunteer);
+      setVolunteers((prev) => [...prev,newVolunteer]);
+      setNewVolunteer({ name: '', phone: '' });
+      setShowAddForm(false);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error adding volunteer:', error);
+      setIsLoading(false);
+    }
+  };
+
   const filteredVolunteers = volunteers.filter((volunteer) =>
-    volunteer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    volunteer.phone.includes(searchTerm)
+    (volunteer.name && volunteer.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (volunteer.phone && volunteer.phone.includes(searchTerm))
   );
 
   return (
@@ -104,13 +117,45 @@ function VolunteerList({ baseUrl }) {
       )}
       {authKey === '1234567890' ? (
         <>
-          <input
-            type="text"
-            placeholder="Search by name or phone"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-4 p-2 border rounded w-1/2"
-          />
+          <div className="flex justify-between items-center mb-4">
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="p-2 border rounded w-3/4"
+            />
+            <button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="px-2 text-white rounded ml-4"
+            >
+              {showAddForm ? '✖' : '➕'}
+            </button>
+          </div>
+          {showAddForm && (
+            <div className="mb-4 p-4 border rounded bg-gray-100">
+              <input
+                type="text"
+                placeholder="Name"
+                value={newVolunteer.name}
+                onChange={(e) => setNewVolunteer({ ...newVolunteer, name: e.target.value })}
+                className="p-2 border rounded mr-2 mb-2 w-full"
+              />
+              <input
+                type="text"
+                placeholder="Phone"
+                value={newVolunteer.phone}
+                onChange={(e) => setNewVolunteer({ ...newVolunteer, phone: e.target.value })}
+                className="p-2 border rounded mr-2 mb-2 w-full"
+              />
+              <button
+                onClick={handleAddVolunteer}
+                className="p-1 font-bold text-xs bg-green-500 text-white rounded"
+              >
+                SUBMIT
+              </button>
+            </div>
+          )}
           {filteredVolunteers.length === 0 ? (
             <p className="text-gray-500">No volunteers found.</p>
           ) : (
