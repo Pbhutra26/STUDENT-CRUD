@@ -129,7 +129,7 @@ function VolunteerList({ baseUrl }) {
               onClick={() => setShowAddForm(!showAddForm)}
               className="px-2 text-white rounded ml-4"
             >
-              {showAddForm ? '✖' : '➕'}
+              {showAddForm ? '✖️' : '➕'}
             </button>
           </div>
           {showAddForm && (
