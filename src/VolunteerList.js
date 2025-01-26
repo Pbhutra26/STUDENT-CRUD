@@ -133,8 +133,15 @@ function VolunteerList({ baseUrl }) {
             </button>
           </div>
           {showAddForm && (
-            <div className="mb-4 p-4 border rounded bg-gray-100">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddVolunteer();
+              }}
+              className="mb-4 p-4 border rounded bg-gray-100"
+            >
               <input
+                required
                 type="text"
                 placeholder="Name"
                 value={newVolunteer.name}
@@ -142,6 +149,7 @@ function VolunteerList({ baseUrl }) {
                 className="p-2 border rounded mr-2 mb-2 w-full"
               />
               <input
+                required
                 type="text"
                 placeholder="Phone"
                 value={newVolunteer.phone}
@@ -149,12 +157,12 @@ function VolunteerList({ baseUrl }) {
                 className="p-2 border rounded mr-2 mb-2 w-full"
               />
               <button
-                onClick={handleAddVolunteer}
+                type="submit"
                 className="p-1 font-bold text-xs bg-green-500 text-white rounded"
               >
                 SUBMIT
               </button>
-            </div>
+            </form>
           )}
           {filteredVolunteers.length === 0 ? (
             <p className="text-gray-500">No volunteers found.</p>

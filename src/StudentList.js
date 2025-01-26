@@ -183,7 +183,10 @@ function StudentList({ baseUrl }) {
                     <p className={` font-extrabold text-blue-900 uppercase ${student.name.length>16?'text-xxs':'text-xs'}`}>{student.name}</p>
                     <p className='text-xs'><strong>No.</strong> {student.rollNumber}</p>
                     <p className='text-xs'><strong>Age:</strong> {student.age}</p>
-                    {new Date().getDay() === 0 && (
+
+                  </div>
+                </Link>
+                {new Date().getDay() === 0 && (
                   <button
                     onClick={() => handleAttendance(student.rollNumber)}
                     className={`px-1 rounded text-xxs text-white ${attendance[student.rollNumber] ? 'bg-green-500' : 'bg-red-500  '}`}
@@ -191,9 +194,6 @@ function StudentList({ baseUrl }) {
                     {attendance[student.rollNumber] ? 'PRESENT' : 'ABSENT'}
                   </button>
                 )}
-                  </div>
-                </Link>
-
               </div>
             ))}
           </div>
