@@ -21,7 +21,7 @@ function StudentList({ baseUrl }) {
 
     const fetchInitialAttendance = async () => {
       const today = new Date();
-      if (today.getDay() === 4) { // Check if today is Sunday
+      if (today.getDay() === 0) { // Check if today is Sunday
         const [date, month, year] = today.toLocaleDateString('en-GB').split('/');
         const formattedDate = `${date}-${month}-${year.slice(2)}`;
         try {
