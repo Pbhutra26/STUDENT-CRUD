@@ -31,6 +31,7 @@ function VolunteerList({ baseUrl }) {
         const formattedDate = `${date}-${month}-${year.slice(2)}`;
         try {
           const response = await axios.get(`${baseUrl}/sundays/${formattedDate}`);
+          console.log(response)
           const presentVolunteers = response.data.volunteers;
           const initialAttendance = {};
           volunteers.forEach(volunteer => {

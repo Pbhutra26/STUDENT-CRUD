@@ -17,8 +17,6 @@ function StudentList({ baseUrl }) {
   const { students } = useContext(StudentContext);
 
   useEffect(() => {
-    setIsLoading(true);
-
     const fetchInitialAttendance = async () => {
       const today = new Date();
       if (today.getDay() === 0) { // Check if today is Sunday
@@ -32,7 +30,6 @@ function StudentList({ baseUrl }) {
             initialAttendance[Number(student.rollNumber)] = presentStudents.includes(student.rollNumber.toString());
           });
           setAttendance(initialAttendance);
-          setIsLoading(false);
         } catch (error) {
           console.error('Error fetching initial attendance:', error);
         }
@@ -42,7 +39,7 @@ function StudentList({ baseUrl }) {
     setIsLoading(true);
     fetchInitialAttendance();
     setIsLoading(false);
-  }, []);
+  }, [students]);
 
   const handleAttendance = async (rollNumber) => {
     const [date, month, year] = new Date().toLocaleDateString('en-GB').split('/');
