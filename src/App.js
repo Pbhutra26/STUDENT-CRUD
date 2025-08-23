@@ -10,6 +10,7 @@ import NavBar from './NavBar';
 import EditStudent from './EditStudent';
 import Attendance from './Attendance';
 import { StudentProvider, StudentContext } from './StudentContext';
+import { PageProvider } from './PageContext';
 import axios from 'axios';
 import { VolunteerProvider, VolunteerContext } from './VolunteerContext';
 import VolunteerList from './VolunteerList';
@@ -66,15 +67,17 @@ function AppContent() {
 
 function App() {
   return (
-    <StudentProvider>
-      <LoadingProvider>
-        <VolunteerProvider>
-          <Router>
-            <AppContent />
-          </Router>
-        </VolunteerProvider>
-      </LoadingProvider>
-    </StudentProvider>
+    <PageProvider>
+      <StudentProvider>
+        <LoadingProvider>
+          <VolunteerProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </VolunteerProvider>
+        </LoadingProvider>
+      </StudentProvider>
+    </PageProvider>
   );
 }
 

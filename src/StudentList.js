@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { PageContext } from './PageContext';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { LoadingContext } from './LoadingContext';
@@ -8,7 +9,8 @@ import 'rc-slider/assets/index.css';
 import ExcelJS from 'exceljs';
 
 function StudentList({ baseUrl }) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const { page, setPage } = useContext(PageContext);
+  const [currentPage, setCurrentPage] = useState(page);
   const [searchTerm, setSearchTerm] = useState('');
   const [attendance, setAttendance] = useState({});
   const [ageRange, setAgeRange] = useState([4, 15]);
@@ -17,6 +19,7 @@ function StudentList({ baseUrl }) {
   const { students } = useContext(StudentContext);
 
   useEffect(() => {
+    setCurrentPage(page);
     const fetchInitialAttendance = async () => {
       const today = new Date();
       if (today.getDay() === 0) { // Check if today is Sunday
@@ -117,19 +120,22 @@ function StudentList({ baseUrl }) {
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
+      setPage(newPage);
     }
   };
 
   // Handler for search input change
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
+    setPage(1);
   };
 
   // Handler for age range change
   const handleAgeRangeChange = (newRange) => {
     setAgeRange(newRange);
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1);
+    setPage(1);
   };
 
   return (

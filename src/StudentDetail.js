@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+
+import { PageContext } from './PageContext';
 
 function StudentDetail({ baseUrl }) {
   const { rollNumber } = useParams();
   const navigate = useNavigate();
+  const { page } = useContext(PageContext);
   const [student, setStudent] = useState(null);
   const [attendance, setAttendance] = useState([]);
   const [attendanceScore, setAttendanceScore] = useState(null);
@@ -18,7 +21,7 @@ function StudentDetail({ baseUrl }) {
         setStudent(response.data);
       } catch (error) {
         alert('Error fetching student data:', error);
-        navigate('/');
+        navigate(-1);
         console.error('Error fetching student data:', error);
       }
     };
@@ -61,12 +64,18 @@ function StudentDetail({ baseUrl }) {
     navigate(`/edit-student/${rollNumber}`);
   };
 
+  // When navigating back, go to the correct page
+  const handleBack = () => {
+    navigate(`/`, { state: { page } });
+  };
+
   if (!student) {
     return <p>Loading...</p>;
   }
 
   return (
     <div className="mt-8">
+      <button onClick={handleBack} className="mb-4 px-3 py-1 bg-gray-200 rounded text-sm">Back to List</button>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Student Details</h2>
         <button
