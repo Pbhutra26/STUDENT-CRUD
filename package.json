@@ -5,6 +5,7 @@
   "dependencies": {
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.9",
+    "browser-image-compression": "^2.0.2",
     "cloudinary": "^2.5.1",
     "cra-template": "1.2.0",
     "exceljs": "^4.4.0",

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LoadingContext } from './LoadingContext';
+import { compressImage } from './imageCompressionUtil';
 
 function EditStudent({ baseUrl }) {
   const { rollNumber } = useParams();
@@ -44,9 +45,12 @@ function EditStudent({ baseUrl }) {
     fetchStudent();
   }, [rollNumber, baseUrl]);
 
-  const handleImageChange = (event) => {
+  const handleImageChange = async (event) => {
     const file = event.target.files[0];
-    setImage(file);
+    if (file) {
+      const compressed = await compressImage(file);
+      setImage(compressed);
+    }
   };
 
   const handleImageUpload = async () => {
@@ -58,7 +62,9 @@ function EditStudent({ baseUrl }) {
 
     try {
       setIsLoading(true);
+      console.time('Uploading image...');
       const response = await axios.post('https://api.cloudinary.com/v1_1/prathamesh-cloud/image/upload', formData);
+      console.timeEnd('Uploading image...');
       return response.data.secure_url;  // Return the image URL from the Cloudinary response
     } catch (error) {
       console.error('Image upload failed:', error);
@@ -85,16 +91,15 @@ function EditStudent({ baseUrl }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setIsLoading(true)
     try {
-      setIsLoading(true);
       const uploadedImageUrl = await handleImageUpload();
 
       const formattedMetadata = metadata.reduce((acc, field) => {
         acc[field.key] = field.value;
         return acc;
       }, {});
-
+      console.time('Server put');
       const response = await axios.put(`${baseUrl}/students/${rollNumber}`, {
         name,
         age,
@@ -108,12 +113,13 @@ function EditStudent({ baseUrl }) {
         schoolName,
         studentClass
       });
+      console.timeEnd('Server put');
       navigate('/students/' + rollNumber);
     } catch (error) {
       alert('An error occurred. Please try again.');
       console.error(error);
-    } finally {
-      setIsLoading(false);
+    }finally{
+      setIsLoading(false)
     }
   };
 
