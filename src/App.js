@@ -49,7 +49,13 @@ function AppContent() {
 
   return (
     <>
-      {isLoading && <LoadingScreen />}
+      {isLoading && (
+        typeof isLoading === 'number' ? (
+          <LoadingScreen percentage={isLoading} />
+        ) : (
+          <LoadingScreen />
+        )
+      )}
       <NavBar />
       <div className="p-8">
         <Routes>

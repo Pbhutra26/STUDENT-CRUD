@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { LoadingContext } from './LoadingContext';
 import { StudentContext } from './StudentContext';
+import { compressImage } from './imageCompressionUtil';
+
 function AddStudentForm({ baseUrl}) {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -18,11 +20,15 @@ function AddStudentForm({ baseUrl}) {
   const { setIsLoading } = useContext(LoadingContext);
 
   const { students , setStudents } = useContext(StudentContext);
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setImage(file);
+  const handleImageChange = async (event) => {
+ const file = event.target.files[0];
+    if (file) {
+      const compressed = await compressImage(file);
+      setImage(compressed);
+    }
   };
  const navigate = useNavigate();
+ 
   const handleImageUpload = async () => {
     if (!image) return;
 
@@ -31,14 +37,14 @@ function AddStudentForm({ baseUrl}) {
     formData.append('upload_preset', 'upload_preset_prathamesh'); // Replace with your unsigned upload preset
 
     try {
-      setIsLoading(true);
+      setIsLoading(0);
       const response = await axios.post('https://api.cloudinary.com/v1_1/prathamesh-cloud/image/upload', formData);
       return response.data.secure_url;  // Return the image URL from the Cloudinary response
     } catch (error) {
       console.error('Image upload failed:', error);
       alert('Image upload failed. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(50);
     }
   };
 
@@ -61,8 +67,9 @@ function AddStudentForm({ baseUrl}) {
     e.preventDefault();
   
     try {
-      setIsLoading(true);
+
       const imageUrl = await handleImageUpload();
+      setIsLoading(75);
   
       const formattedMetadata = metadata.reduce((acc, field) => {
         acc[field.key] = field.value;

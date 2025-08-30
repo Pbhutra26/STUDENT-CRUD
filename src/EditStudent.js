@@ -61,7 +61,7 @@ function EditStudent({ baseUrl }) {
     formData.append('upload_preset', 'upload_preset_prathamesh'); // Replace with your unsigned upload preset
 
     try {
-      setIsLoading(true);
+      setIsLoading(0);
       console.time('Uploading image...');
       const response = await axios.post('https://api.cloudinary.com/v1_1/prathamesh-cloud/image/upload', formData);
       console.timeEnd('Uploading image...');
@@ -70,7 +70,7 @@ function EditStudent({ baseUrl }) {
       console.error('Image upload failed:', error);
       alert('Image upload failed. Please try again.');
     } finally {
-      setIsLoading(false);
+      setIsLoading(50);
     }
   };
 
@@ -91,10 +91,10 @@ function EditStudent({ baseUrl }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true)
+
     try {
       const uploadedImageUrl = await handleImageUpload();
-
+      setIsLoading(70)
       const formattedMetadata = metadata.reduce((acc, field) => {
         acc[field.key] = field.value;
         return acc;
