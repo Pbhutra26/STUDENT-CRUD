@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import IdempotentButton from './IdempotentButton';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 
@@ -125,7 +126,7 @@ function StudentDetail({ baseUrl }) {
               placeholder="1-20 Sundays"
               maxLength={2}
             />
-            <button
+            <IdempotentButton
               onClick={() => {
                 const n = parseInt(numSundays, 10);
                 if (!n || n < 1 || n > 20) {
@@ -136,10 +137,10 @@ function StudentDetail({ baseUrl }) {
                 fetchAttendance();
               }}
               className="bg-green-500 text-white px-2 py-1 rounded text-sm hover:bg-green-600"
-              disabled={attendanceLoading}
+              isLoading={attendanceLoading}
             >
-              {attendanceLoading ? 'Loading...' : `Show Attendance`}
-            </button>
+              Show Attendance
+            </IdempotentButton>
           </div>
           {attendance.length > 0 && (
             <>

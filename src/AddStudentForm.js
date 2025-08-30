@@ -17,9 +17,10 @@ function AddStudentForm({ baseUrl}) {
   const [dob, setDob] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [studentClass, setStudentClass] = useState('');
-  const { setIsLoading } = useContext(LoadingContext);
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
 
   const { students , setStudents } = useContext(StudentContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleImageChange = async (event) => {
  const file = event.target.files[0];
     if (file) {
@@ -37,7 +38,7 @@ function AddStudentForm({ baseUrl}) {
     formData.append('upload_preset', 'upload_preset_prathamesh'); // Replace with your unsigned upload preset
 
     try {
-      setIsLoading(0);
+      setIsLoading(25);
       const response = await axios.post('https://api.cloudinary.com/v1_1/prathamesh-cloud/image/upload', formData);
       return response.data.secure_url;  // Return the image URL from the Cloudinary response
     } catch (error) {
@@ -65,17 +66,15 @@ function AddStudentForm({ baseUrl}) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
-
       const imageUrl = await handleImageUpload();
       setIsLoading(75);
-  
       const formattedMetadata = metadata.reduce((acc, field) => {
         acc[field.key] = field.value;
         return acc;
       }, {});
-  
       const response = await axios.post(`${baseUrl}/students`, {
         name,
         age,
@@ -89,15 +88,14 @@ function AddStudentForm({ baseUrl}) {
         schoolName,
         studentClass
       });
-
       setStudents([...students, response.data]);
       navigate('/students/'+response.data.rollNumber);
-      // alert(response.data.message);
     } catch (error) {
       alert('An error occurred. Please try again.');
       console.error(error);
     } finally {
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -261,6 +259,7 @@ function AddStudentForm({ baseUrl}) {
             type="button"
             onClick={() => deleteField(index)}
             className="px-2 py-1 bg-white text-red rounded-full"
+            disabled={isLoading || isSubmitting}
           >
             &#10006;
           </button>
@@ -271,11 +270,16 @@ function AddStudentForm({ baseUrl}) {
         type="button"
         onClick={addField}
         className="m-1 px-2 py-1 bg-blue-500 text-white rounded-lg"
+        disabled={isLoading || isSubmitting}
       >
         Add Field
       </button>
 
-      <button type="submit" className="px-2 py-1 m-1 bg-green-500 text-white rounded-lg">
+      <button
+        type="submit"
+        className="px-2 py-1 m-1 bg-green-500 text-white rounded-lg"
+        disabled={isLoading || isSubmitting}
+      >
         Add Student
       </button>
     </form>

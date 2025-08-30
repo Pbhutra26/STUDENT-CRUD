@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import IdempotentButton from './IdempotentButton';
 import { LoadingContext } from './LoadingContext';
 import jsPDF from 'jspdf';
 
@@ -11,7 +12,16 @@ function Attendance({ baseUrl }) {
     setIsLoading(true);
     try {
       const response = await fetch(`${baseUrl}/sundays`);
-      const data = await response.json();
+      let data = await response.json();
+      // Sort by date descending (most recent first)
+      data = data.sort((a, b) => {
+        // date format: dd-mm-yy
+        const parse = (str) => {
+          const [day, month, year] = str.split('-');
+          return new Date(`20${year}-${month}-${day}`);
+        };
+        return parse(b.date) - parse(a.date);
+      });
       setAttendance(data);
     } catch (error) {
       console.error("Error fetching attendance:", error);
@@ -123,30 +133,30 @@ function Attendance({ baseUrl }) {
                 <h2 className="text-xl font-semibold mb-2">{formatDate(entry.date)}</h2>
                 <p className="text-sm">{(entry.numbers ? entry.numbers.length : 0)} Student(s)</p>
                 <p className="text-sm">{(entry.volunteers ? entry.volunteers.length : 0)} Volunteer(s)</p>
-                <button
+                <IdempotentButton
                   onClick={() => generatePDF(entry)}
                   className="bg-green-500 text-white px-2 py-1 rounded mt-2 text-sm"
                 >
                   Download PDF
-                </button>
+                </IdempotentButton>
               </div>
             ))}
           </div>
           <div className="flex justify-between mt-4">
-            <button
+            <IdempotentButton
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
               className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
             >
               Previous
-            </button>
-            <button
+            </IdempotentButton>
+            <IdempotentButton
               onClick={handleNextPage}
               disabled={currentPage * itemsPerPage >= attendance.length}
               className="bg-blue-500 text-white px-4 py-2 rounded"
             >
               Next
-            </button>
+            </IdempotentButton>
           </div>
         </>
       )}

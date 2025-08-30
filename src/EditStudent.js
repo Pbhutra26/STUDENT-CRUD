@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
+import IdempotentButton from './IdempotentButton';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LoadingContext } from './LoadingContext';
@@ -19,7 +20,7 @@ function EditStudent({ baseUrl }) {
   const [dob, setDob] = useState('');
   const [schoolName, setSchoolName] = useState('');
   const [studentClass, setStudentClass] = useState('');
-  const { setIsLoading } = useContext(LoadingContext);
+  const { isLoading, setIsLoading } = useContext(LoadingContext);
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -61,7 +62,7 @@ function EditStudent({ baseUrl }) {
     formData.append('upload_preset', 'upload_preset_prathamesh'); // Replace with your unsigned upload preset
 
     try {
-      setIsLoading(0);
+      setIsLoading(25);
       console.time('Uploading image...');
       const response = await axios.post('https://api.cloudinary.com/v1_1/prathamesh-cloud/image/upload', formData);
       console.timeEnd('Uploading image...');
@@ -294,27 +295,33 @@ function EditStudent({ baseUrl }) {
             className="w-2/5 px-4 py-2 border rounded mr-2"
             required
           />
-          <button
+          <IdempotentButton
             type="button"
             onClick={() => deleteField(index)}
             className="px-2 py-1 bg-white text-red rounded-full"
+            disabled={isLoading}
           >
             &#10006;
-          </button>
+          </IdempotentButton>
         </div>
       ))}
 
-      <button
+      <IdempotentButton
         type="button"
         onClick={addField}
         className="m-1 px-2 py-1 bg-blue-500 text-white rounded-lg"
+        disabled={isLoading}
       >
         Add Field
-      </button>
+      </IdempotentButton>
 
-      <button type="submit" className="px-2 py-1 m-1 bg-green-500 text-white rounded-lg">
+      <IdempotentButton
+        type="submit"
+        className="px-2 py-1 m-1 bg-green-500 text-white rounded-lg"
+        isLoading={isLoading}
+      >
         Save Changes
-      </button>
+      </IdempotentButton>
     </form>
   );
 }
